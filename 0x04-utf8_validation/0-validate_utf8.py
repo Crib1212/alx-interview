@@ -1,20 +1,34 @@
 #!/usr/bin/python3
 """
+validUTF8
 """
 
+
 def validUTF8(data):
-    list = []
-    for i in data:
-        if (i & 0xF0) == 0xF0:
-            list.append(4)
-        if (i & 0xE0) == 0xE0:
-            list.append(3)
-        if (i & 0xC0) == 0xC0:
-            list.append(2)
-        if (i & 0x7F) == 0:
-            list.append(1)
-    print(list)
+    """Determines if a given data set represents a valid UTF-8 encoding"""
+    count = 0
 
+    for x in data:
 
-data = [80, 121, 116, 104, 111, 110, 32, 105, 115, 32, 99, 111, 111, 108, 33]
-validUTF8(data)
+        if 191 >= x >= 128:
+
+            if not count:
+                return False
+
+            count -= 1
+        else:
+            if count:
+                return False
+
+            if x < 128:
+                continue
+            elif x < 224:
+                count = 1
+            elif x < 240:
+                count = 2
+            elif x < 248:
+                count = 3
+            else:
+                return False
+
+    return count == 0
